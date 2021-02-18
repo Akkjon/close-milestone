@@ -1,1 +1,10 @@
-
+name: 'Close a milestone by its name'
+description: 'Closes a milestone with the provided name'
+author: 'Akkjon'
+inputs:
+  milestone_name:
+    description: 'The name of the minlestone.'
+    required: true
+runs:
+  using: 'node12'
+  main: 'index.js'
