@@ -1,6 +1,9 @@
 name: 'Close a milestone by its name'
 description: 'Closes a milestone with the provided name'
 author: 'Akkjon'
+branding:
+  icon: archive
+  color: blue
 inputs:
   milestone_name:
     description: 'The name of the minlestone.'
