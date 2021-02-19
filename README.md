@@ -1,5 +1,6 @@
 # Remove-milestone
 A Github action to remove a milestone by the milestone's name
+[Code of conduct](CODE_OF_CONDUCT.md)
 
 ## Inputs
 ### `milestone_name`
