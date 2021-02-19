@@ -15,7 +15,7 @@ console.log(owner)
 console.log(repo)
 
 async function authenticate() {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         auth = createActionAuth();
         token = await auth();
 
@@ -26,7 +26,7 @@ async function authenticate() {
 }
 
 async function getMilestones() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         console.log("Fetching milestones...")
         var response = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
             headers: {
@@ -44,7 +44,7 @@ async function getMilestones() {
     })
 }
 
-async function getMilestoneId(milestones) {
+function getMilestoneId(milestones) {
     for(var i = 0; i<milestones.length; i++) {
         var element = milestones[i];
         if(element.title == milestoneName) {
@@ -57,7 +57,7 @@ async function getMilestoneId(milestones) {
 }
 
 async function deleteMilestone(milestoneNumber) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         console.log(`Closing milestone ${milestoneName}(${milestoneNumber})...`)
         var response = await octokit.request("PATCH /repos/{owner}/{repo}/milestones/{milestone_number}", {
             headers: {
