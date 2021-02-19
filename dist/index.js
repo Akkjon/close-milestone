@@ -1,7 +1,8 @@
 const core = require('@actions/core');
-const { octokit } = require("@octokit/core");
+const { Octokit } = require("@octokit/core");
 const { createActionAuth } = require("@octokit/auth");
 const milestoneName = core.getInput('milestone_name')
+const octokit = new Octokit();
 
 let auth;
 let token;
@@ -10,17 +11,11 @@ const repoInfo = process.env.GITHUB_REPOSITORY;
 const owner = repoInfo.substring(0, repoInfo.indexOf("/"))
 const repo = repoInfo.substring(repoInfo.indexOf("/") + 1)
 
-console.log("Info:")
-console.log(owner)
-console.log(repo)
-
 async function authenticate() {
     return new Promise(async (resolve) => {
         auth = createActionAuth();
         token = await auth();
 
-        console.log("token:")
-        console.log(token);
         resolve();
     })
 }
