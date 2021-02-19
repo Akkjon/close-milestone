@@ -60,7 +60,7 @@ async function deleteMilestone(milestoneNumber) {
               },
             owner: owner,
             repo: repo,
-            milestone_number: id,
+            milestone_number: milestoneNumber,
             state: 'closed'
         })
         if(response.status != 200) {
@@ -79,8 +79,6 @@ async function run() {
     await authenticate();
     let milestones = await getMilestones();
     let id = getMilestoneId(milestones);
-    console.log("id:")
-    console.log(id)
     if(id == null) {
         core.warning("Action stopped because no milestone was found");
         return;
