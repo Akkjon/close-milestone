@@ -2,7 +2,6 @@ const core = require('@actions/core');
 const { octokit } = require("@octokit/core");
 const { createActionAuth } = require("@octokit/auth");
 const milestoneName = core.getInput('milestone_name')
-const isAsync = core.getInput('async')
 
 let auth;
 let token;
@@ -80,16 +79,7 @@ function deleteMilestone(milestoneNumber) {
     })
 }
 
-async function runAsync() {
-    try {
-        run()
-    }
-    catch (error) {
-        core.setFailed(error.message);
-    }
-}
-
-function run() {
+async function run() {
     await authenticate();
     let milestones = await getMilestones();
     let id = getMilestoneId(milestones);
@@ -102,8 +92,4 @@ function run() {
     await deleteMilestone(id)
 }
 
-if(isAsync) {
-    runAsync()
-} else {
-    run()
-}
+run()
