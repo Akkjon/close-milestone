@@ -4,10 +4,8 @@ const { createActionAuth } = require("@octokit/auth");
 const milestoneName = core.getInput('milestone_name')
 const isAsync = core.getInput('async')
 
-const auth = createActionAuth();
-const token = await auth();
-console.log("token:")
-console.log(token);
+let auth;
+let token;
 
 const repoInfo = process.env.GITHUB_REPOSITORY;
 const owner = repoInfo.substring(0, repoInfo.indexOf("/"))
@@ -16,7 +14,16 @@ const repo = repoInfo.substring(repoInfo.indexOf("/") + 1)
 console.log("Info:")
 console.log(owner)
 console.log(repo)
+function authenticate() {
+    return new Promise((resolve) => {
+        auth = createActionAuth();
+        token = await auth();
 
+        console.log("token:")
+        console.log(token);
+        resolve();
+    })
+}
 
 function getMilestones() {
     return new Promise((resolve, reject) => {
@@ -83,6 +90,7 @@ async function runAsync() {
 }
 
 function run() {
+    await authenticate();
     let milestones = await getMilestones();
     let id = getMilestoneId(milestones);
     console.log("id:")
