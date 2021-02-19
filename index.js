@@ -5,7 +5,7 @@ const milestoneName = core.getInput('milestone_name')
 const isAsync = core.getInput('async')
 
 const auth = createActionAuth();
-const { token } = await auth();
+const token = await auth();
 console.log("token:")
 console.log(token);
 
@@ -23,7 +23,7 @@ function getMilestones() {
         console.log("Fetching milestones...")
         var response = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
             headers: {
-                authorization: "Bearer " + token,
+                authorization: "Bearer " + token.token,
             },
             owner: owner,
             repo: repo
@@ -54,7 +54,7 @@ function deleteMilestone(milestoneNumber) {
         console.log(`Closing milestone ${milestoneName}(${milestoneNumber})...`)
         var response = await octokit.request("PATCH /repos/{owner}/{repo}/milestones/{milestone_number}", {
             headers: {
-                authorization: "Bearer " + token,
+                authorization: "Bearer " + token.token,
               },
             owner: owner,
             repo: repo,
