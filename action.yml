@@ -5,10 +5,6 @@ inputs:
   milestone_name:
     description: 'The name of the minlestone.'
     required: true
-  async:
-    description: 'If the closing should be async. Default is true'
-    required: false
-    default: true
 runs:
   using: 'node12'
   main: 'index.js'
