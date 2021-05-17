@@ -117,7 +117,11 @@ async function run() {
     let milestones = await getMilestones();
     let id = getMilestoneId(milestones, milestoneName);
     if(id == null) {
-        core.warning("Action stopped because no milestone was found");
+        if(core.getBooleanInput('crash_on_missing')===true) {
+            core.setFailed("Milestone with provided name not found");
+        } else {
+            core.warning("Action stopped because no milestone was found");
+        }
         return;
     }
     await closeMilestone(id)
