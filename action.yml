@@ -8,6 +8,9 @@ inputs:
   milestone_name:
     description: 'The name of the minlestone.'
     required: true
+  crash_on_missing:
+    description: 'If the Milestone should crash with an exit code if the provided Milestone is not found.'
+    default: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
