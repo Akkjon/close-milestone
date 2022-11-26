@@ -12,5 +12,5 @@ inputs:
     description: 'If the Milestone should crash with an exit code if the provided Milestone is not found.'
     default: false
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
