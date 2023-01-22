@@ -124,7 +124,8 @@ async function run() {
         }
         return;
     }
-    await closeMilestone(id)
+    await closeMilestone(id);
+    core.setOutput('milestone_id', id);
 }
 
 //starts the workflow

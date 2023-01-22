@@ -12,7 +12,8 @@ Default: false
 
 
 ## Outputs
-None
+### `milestone_id`
+The id of the milestone which has been closed.
 
 ## Explanation for usage
 - The `uses` keyword specifies which action us used. `Akkjon/close-milestone` specifies which repository is used, the `@v2.0.2` defines which version of the action is used. To always use the latest version, you can change it to `@master`, but please be aware that changes in the action might break your workflow.

@@ -6,11 +6,14 @@ branding:
   color: blue
 inputs:
   milestone_name:
-    description: 'The name of the minlestone.'
+    description: 'The name of the milestone.'
     required: true
   crash_on_missing:
-    description: 'If the Milestone should crash with an exit code if the provided Milestone is not found.'
+    description: 'If the action should crash with an exit code if the provided milestone is not found.'
     default: false
+outputs:
+  milestone_id:
+    description: 'The id of the milestone which has been closed.'
 runs:
   using: 'node16'
   main: 'dist/index.js'
