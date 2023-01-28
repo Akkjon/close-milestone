@@ -1,26 +1,26 @@
 {
-  "name": "Close-milestone",
+  "name": "close-milestone",
   "version": "1.0.0",
-  "description": "A Github action to remove a milestone by the milestone's name",
-  "main": "index.js",
+  "description": "A Github action to close a milestone by the milestone's name",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Akkjon/Close-milestone.git"
+    "url": "git+https://github.com/Akkjon/close-milestone.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Akkjon/Close-milestone/issues"
+    "url": "https://github.com/Akkjon/close-milestone/issues"
   },
-  "homepage": "https://github.com/Akkjon/Close-milestone#readme",
+  "homepage": "https://github.com/Akkjon/close-milestone#readme",
   "dependencies": {
-    "@actions/core": "^1.9.1",
-    "@actions/github": "^4.0.0",
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
     "@octokit/auth": "^3.0.3",
-    "@octokit/core": "^3.2.5"
+    "@octokit/core": "^4.2.0"
   }
 }
