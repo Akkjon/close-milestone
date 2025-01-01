@@ -50,6 +50,7 @@ jobs:
         id: create-milestone
         run: |
           MILESTONE_NAME="Test-Milestone-$REF_NAME";
+          echo "🆕🏁 Creating Milestone with name $MILESTONE_NAME"
           echo "MILESTONE_NAME=$MILESTONE_NAME" >> $GITHUB_OUTPUT
 
           RESPONSE=$(curl -X POST -v \
@@ -58,7 +59,6 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -d '{"title": "'"$MILESTONE_NAME"'", "state": "open", "description": "Test-Milestone", "due_on": "'"$(date -d '+1 days' '+%FT%TZ')"'"}' \
             "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones")
-            echo "Response $RESPONSE"
 
           MILESTONE_ID=$(echo "$RESPONSE" | jq ".number")
           echo "MILESTONE_ID=$MILESTONE_ID" >> $GITHUB_OUTPUT
@@ -81,6 +81,7 @@ jobs:
       - name: Verify Action
         id: verify
         run: |
+          echo "🏁🔍 Retreiving all Milestones"
           RESPONSE=$(curl \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
@@ -88,6 +89,7 @@ jobs:
 
           STATE=$(echo $RESPONSE | jq ".[] | select(.number==$ORIGINAL_MILESTONE_ID)" | jq -r ".state")
 
+          echo "🏁🧙‍♀️ Verifying that Milestone was correctly closed"
           FAIL="FALSE"
           if [ "$CLOSED_MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]; then
             echo "Closed milestone id ($CLOSED_MILESTONE_ID) and opened milestone ($ORIGINAL_MILESTONE_ID) id do not match." >> /dev/stderr
@@ -113,6 +115,7 @@ jobs:
         id: cleanup
         if: always()
         run: |
+          echo "🏁🚮 Deleting created Milestone"
           curl -L \
             -X DELETE \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
