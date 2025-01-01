@@ -47,7 +47,7 @@ offensive, or harmful.
 
 This Code of Conduct applies both within project spaces and in public spaces
 when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
+representing a project or community include using an official project email
 address, posting via an official social media account, or acting as an appointed
 representative at an online or offline event. Representation of a project may be
 further defined and clarified by project maintainers.
@@ -55,7 +55,7 @@ further defined and clarified by project maintainers.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at akkjon@outlook.de. All complaints
+reported by contacting the project team via creating an issue. All complaints
 will be reviewed and investigated and will result in a response that is deemed
 necessary and appropriate to the circumstances. The project team is obligated to
 maintain confidentiality with regard to the reporter of an incident. Further
@@ -67,11 +67,10 @@ members of the project's leadership.
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage],
-version 1.4, available at
-https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
-
-[homepage]: https://www.contributor-covenant.org
+This Code of Conduct is adapted from the
+[Contributor Covenant](https://www.contributor-covenant.org), version 1.4,
+available at
+[https://www.contributor-covenant.org/version/1/4/code-of-conduct.html](https://www.contributor-covenant.org/version/1/4/code-of-conduct.html)
 
 For answers to common questions about this code of conduct, see
-https://www.contributor-covenant.org/faq
+[https://www.contributor-covenant.org/faq](https://www.contributor-covenant.org/faq)

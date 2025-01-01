@@ -55,7 +55,7 @@ jobs:
         run: |
           MILESTONE_NAME="Test-Milestone-$REF_NAME";
           echo "🆕🏁 Creating Milestone with name $MILESTONE_NAME"
-          echo "MILESTONE_NAME=$MILESTONE_NAME" >> $GITHUB_OUTPUT
+          echo "MILESTONE_NAME=$MILESTONE_NAME" >> "$GITHUB_OUTPUT"
 
           RESPONSE=$(curl -X POST -v \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -65,7 +65,7 @@ jobs:
             "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones")
 
           MILESTONE_ID=$(echo "$RESPONSE" | jq ".number")
-          echo "MILESTONE_ID=$MILESTONE_ID" >> $GITHUB_OUTPUT
+          echo "MILESTONE_ID=$MILESTONE_ID" >> "$GITHUB_OUTPUT"
 
           echo "Created Milestone with number $MILESTONE_ID and name $MILESTONE_NAME"
         env:
@@ -91,7 +91,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones?state=all")
 
-          STATE=$(echo $RESPONSE | jq ".[] | select(.number==$ORIGINAL_MILESTONE_ID)" | jq -r ".state")
+          STATE=$(echo "$RESPONSE" | jq ".[] | select(.number==$ORIGINAL_MILESTONE_ID)" | jq -r ".state")
 
           echo "🏁🧙‍♀️ Verifying that Milestone was correctly closed"
           FAIL="FALSE"
@@ -124,7 +124,7 @@ jobs:
             -X DELETE \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones/$MILESTONE_ID
+            "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones/$MILESTONE_ID"
         env:
           GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
           MILESTONE_ID: ${{ steps.create-milestone.outputs.MILESTONE_ID }}

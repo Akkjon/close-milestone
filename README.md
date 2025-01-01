@@ -1,6 +1,6 @@
 # Remove-milestone
 
-A Github action to remove a milestone by the milestone's name
+A GitHub Action to remove a milestone by the milestone's name
 [Code of conduct](CODE_OF_CONDUCT.md)
 
 [![GitHub release](https://img.shields.io/github/tag/Akkjon/close-milestone.svg)](https://gitHub.com/Akkjon/close-milestone/releases/)
@@ -23,7 +23,7 @@ false
 
 ### `milestone_id`
 
-The id of the milestone which has been closed.
+The ID of the milestone which has been closed.
 
 ## Explanation for usage
 
