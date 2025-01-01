@@ -91,17 +91,17 @@ jobs:
 
           echo "🏁🧙‍♀️ Verifying that Milestone was correctly closed"
           FAIL="FALSE"
-          if [ "$CLOSED_MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]; then
+          if [[ "$CLOSED_MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]]; then
             echo "Closed milestone id ($CLOSED_MILESTONE_ID) and opened milestone ($ORIGINAL_MILESTONE_ID) id do not match." >> /dev/stderr
             FAIL="TRUE"
           fi
 
-          if [ "$STATE" != "closed"]; then
+          if [[ "$STATE" != "closed" ]]; then
             echo "Milestone did not get closed. Its state was $STATE" >> /dev/stderr
             FAIL="TRUE"
           fi
 
-          if [ "$FAIL" = "TRUE"]; then
+          if [[ "$FAIL" == "TRUE" ]]; then
             exit 1
           fi
         env:
