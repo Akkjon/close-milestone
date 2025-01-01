@@ -23,6 +23,7 @@ const MOCK_MILESTONE_NAME = 'milestone';
 
 describe('main', () => {
   test('run fails if no repository information is supplied', async () => {
+    process.env.GITHUB_REPOSITORY = undefined;
     await run();
     expectSetFailed(
       'Cannot determine repository owner and name because repository url does not comply with owner/repo and instead is undefined',
