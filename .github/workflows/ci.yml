@@ -58,6 +58,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"title": "'"$MILESTONE_NAME"'", "state": "open", "description": "Test-Milestone", "due_on": "'"$(date -d '+1 days' '+%FT%TZ')"'"}' \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones")
+            echo "Response $RESPONSE"
 
           MILESTONE_ID=$(echo "$RESPONSE" | jq ".number")
           echo "MILESTONE_ID=$MILESTONE_ID" >> $GITHUB_OUTPUT
