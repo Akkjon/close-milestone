@@ -2,7 +2,6 @@ import * as core from '@actions/core';
 import * as auth from '../src/auth';
 import { run } from '../src/main';
 import * as milestones from '../src/milestones';
-import { expectSetFailed } from './testUtils';
 
 jest.mock('../src/auth');
 jest.mock('../src/milestones');
@@ -25,18 +24,16 @@ describe('main', () => {
   test('run fails if no repository information is supplied', async () => {
     process.env.GITHUB_REPOSITORY = undefined;
     await run();
-    expectSetFailed(
-      'Cannot determine repository owner and name because repository url does not comply with owner/repo and instead is undefined',
-      MOCK_MILESTONE_NAME,
+    expect(core.setFailed).toHaveBeenCalledWith(
+      `Milestone ${MOCK_MILESTONE_NAME} cannot be closed. Reason: Cannot determine repository owner and name because repository url does not comply with owner/repo and instead is undefined`,
     );
   });
 
   test('run fails if incorrect repository information is supplied', async () => {
     process.env.GITHUB_REPOSITORY = 'thisshouldneverhappen';
     await run();
-    expectSetFailed(
-      'Cannot determine repository owner and name because repository url does not comply with owner/repo and instead is thisshouldneverhappen',
-      MOCK_MILESTONE_NAME,
+    expect(core.setFailed).toHaveBeenCalledWith(
+      `Milestone ${MOCK_MILESTONE_NAME} cannot be closed. Reason: Cannot determine repository owner and name because repository url does not comply with owner/repo and instead is thisshouldneverhappen`,
     );
   });
 

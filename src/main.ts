@@ -1,13 +1,18 @@
 import * as core from '@actions/core';
 import { authenticate } from './auth';
-import { closeMilestone, getMilestoneId, getMilestones } from './milestones';
+import {
+  closeMilestone,
+  getMilestoneId,
+  getMilestones,
+  RepositoryInformation,
+} from './milestones';
 
 /**
  * Implements the main workflow.
  *
  * authenticate -> get milestones -> close milestone
  */
-export async function run() {
+export async function run(): Promise<void> {
   const milestoneName = core.getInput('milestone_name');
 
   try {
@@ -15,8 +20,8 @@ export async function run() {
 
     await authenticate();
 
-    let milestones = await getMilestones(repoInformation);
-    let id = getMilestoneId(milestones, milestoneName);
+    const milestones = await getMilestones(repoInformation);
+    const id = getMilestoneId(milestones, milestoneName);
     if (id == null) {
       handleMissingMilestone();
       return;
@@ -34,7 +39,7 @@ export async function run() {
   }
 }
 
-function handleMissingMilestone() {
+function handleMissingMilestone(): void {
   if (core.getBooleanInput('crash_on_missing')) {
     core.setFailed('Milestone with provided name not found');
   } else {
@@ -42,7 +47,7 @@ function handleMissingMilestone() {
   }
 }
 
-function getRepositoryInformation() {
+function getRepositoryInformation(): RepositoryInformation {
   const repoUrl =
     process.env.CLOSE_MILESTONE_REPOSITORY ?? process.env.GITHUB_REPOSITORY;
   if (!repoUrl || !repoUrl.includes('/')) {

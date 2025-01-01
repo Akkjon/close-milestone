@@ -3475,8 +3475,8 @@ async function run() {
     try {
         const repoInformation = getRepositoryInformation();
         await (0, auth_1.authenticate)();
-        let milestones = await (0, milestones_1.getMilestones)(repoInformation);
-        let id = (0, milestones_1.getMilestoneId)(milestones, milestoneName);
+        const milestones = await (0, milestones_1.getMilestones)(repoInformation);
+        const id = (0, milestones_1.getMilestoneId)(milestones, milestoneName);
         if (id == null) {
             handleMissingMilestone();
             return;
@@ -3532,17 +3532,13 @@ async function getMilestones(repository) {
     console.log(`Fetching milestones from repository ${repository.owner}/${repository.name}...`);
     const { request } = await __nccwpck_require__.e(/* import() */ 870).then(__nccwpck_require__.bind(__nccwpck_require__, 870));
     //uses Octokit for request
-    var response = await request('GET /repos/{owner}/{repo}/milestones', {
+    const response = await request('GET /repos/{owner}/{repo}/milestones', {
         headers: {
             authorization: (0, auth_1.getAuthorization)(),
         },
         owner: repository.owner,
         repo: repository.name,
     });
-    //if request failed
-    if (response.status != 200) {
-        throw new Error(`Milestones cannot be requested for repository, GitHub responded with status code ${response.status}`);
-    }
     //return data
     console.log(`Found ${response.data.length} milestones in repository`);
     return response.data;
@@ -3575,7 +3571,7 @@ async function closeMilestone(milestoneId, repository) {
     console.log(`Closing milestone  with id ${milestoneId}...`);
     const { request } = await __nccwpck_require__.e(/* import() */ 870).then(__nccwpck_require__.bind(__nccwpck_require__, 870));
     //try to close milestone
-    var response = await request('PATCH /repos/{owner}/{repo}/milestones/{milestone_number}', {
+    await request('PATCH /repos/{owner}/{repo}/milestones/{milestone_number}', {
         headers: {
             authorization: (0, auth_1.getAuthorization)(),
         },
@@ -3584,10 +3580,6 @@ async function closeMilestone(milestoneId, repository) {
         milestone_number: milestoneId,
         state: 'closed',
     });
-    //if request failed
-    if (response.status != 200) {
-        throw new Error(`Milestone with id ${milestoneId} Cannot close Milestone, GitHub responded with status code ${response.status}`);
-    }
 }
 
 
@@ -3836,7 +3828,7 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const main_1 = __nccwpck_require__(730);
 //starts the workflow
-(0, main_1.run)();
+void (0, main_1.run)();
 
 })();
 

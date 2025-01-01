@@ -44,23 +44,6 @@ describe('milestones', () => {
     );
   });
 
-  test('getMilestones status 500 throws error', async () => {
-    (auth.getAuthorization as jest.Mock).mockReturnValue('Bearer token');
-
-    mockRequest.mockResolvedValue({
-      status: 500,
-      data: null,
-    });
-    expect(
-      getMilestones({
-        owner: 'Akkjon',
-        name: 'close-milestone',
-      }),
-    ).rejects.toThrow(
-      'Milestones cannot be requested for repository, GitHub responded with status code 500',
-    );
-  });
-
   test('getMilestones returns data', async () => {
     (auth.getAuthorization as jest.Mock).mockReturnValue('Bearer token');
 
@@ -116,22 +99,6 @@ describe('milestones', () => {
         milestone_number: 1,
         state: 'closed',
       },
-    );
-  });
-
-  test('closeMilestone throws if api does not response with 200', async () => {
-    (auth.getAuthorization as jest.Mock).mockReturnValue('Bearer token');
-
-    mockRequest.mockResolvedValue({
-      status: 500,
-    });
-    expect(
-      closeMilestone(1, {
-        owner: 'Akkjon',
-        name: 'close-milestone',
-      }),
-    ).rejects.toThrow(
-      'Milestone with id 1 Cannot close Milestone, GitHub responded with status code 500',
     );
   });
 });

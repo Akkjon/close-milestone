@@ -13,7 +13,9 @@ export type RepositoryInformation = {
  * Fetches the milestones of the repository and returns them as a JSON-Object
  * @returns Object : the JSON-Object that the github-API returned
  */
-export async function getMilestones(repository: RepositoryInformation) {
+export async function getMilestones(
+  repository: RepositoryInformation,
+): Promise<Milestones> {
   console.log(
     `Fetching milestones from repository ${repository.owner}/${repository.name}...`,
   );
@@ -21,19 +23,13 @@ export async function getMilestones(repository: RepositoryInformation) {
   const { request } = await import('@octokit/request');
 
   //uses Octokit for request
-  var response = await request('GET /repos/{owner}/{repo}/milestones', {
+  const response = await request('GET /repos/{owner}/{repo}/milestones', {
     headers: {
       authorization: getAuthorization(),
     },
     owner: repository.owner,
     repo: repository.name,
   });
-  //if request failed
-  if (response.status != 200) {
-    throw new Error(
-      `Milestones cannot be requested for repository, GitHub responded with status code ${response.status}`,
-    );
-  }
 
   //return data
   console.log(`Found ${response.data.length} milestones in repository`);
@@ -46,7 +42,10 @@ export async function getMilestones(repository: RepositoryInformation) {
  * @param {string} _milestoneName The name to get the id for
  * @returns {number} The id of the requested milestone
  */
-export function getMilestoneId(milestones: Milestones, milestoneName: string) {
+export function getMilestoneId(
+  milestones: Milestones,
+  milestoneName: string,
+): number | null {
   //iterates over all milestones
   for (const element of milestones) {
     //if milestone name matches
@@ -69,29 +68,19 @@ export function getMilestoneId(milestones: Milestones, milestoneName: string) {
 export async function closeMilestone(
   milestoneId: number,
   repository: RepositoryInformation,
-) {
+): Promise<void> {
   console.log(`Closing milestone  with id ${milestoneId}...`);
 
   const { request } = await import('@octokit/request');
 
   //try to close milestone
-  var response = await request(
-    'PATCH /repos/{owner}/{repo}/milestones/{milestone_number}',
-    {
-      headers: {
-        authorization: getAuthorization(),
-      },
-      owner: repository.owner,
-      repo: repository.name,
-      milestone_number: milestoneId,
-      state: 'closed',
+  await request('PATCH /repos/{owner}/{repo}/milestones/{milestone_number}', {
+    headers: {
+      authorization: getAuthorization(),
     },
-  );
-
-  //if request failed
-  if (response.status != 200) {
-    throw new Error(
-      `Milestone with id ${milestoneId} Cannot close Milestone, GitHub responded with status code ${response.status}`,
-    );
-  }
+    owner: repository.owner,
+    repo: repository.name,
+    milestone_number: milestoneId,
+    state: 'closed',
+  });
 }
