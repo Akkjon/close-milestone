@@ -55,7 +55,7 @@ jobs:
           RESPONSE=$(curl -X POST -v \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -H "Accept: application/vnd.github.v3+json" \
+            -H "Accept: application/vnd.github+json" \
             -d '{"title": "'"$MILESTONE_NAME"'", "state": "open", "description": "Test-Milestone", "due_on": "'"$(date -d '+1 days' '+%FT%TZ')"'"}' \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones")
             echo "Response $RESPONSE"
@@ -82,17 +82,15 @@ jobs:
         run: |
           RESPONSE=$(curl \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Content-Type: application/json" \
-            -H "Accept: application/vnd.github.v3+json" \
+            -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones?state=all")
 
           STATE=$(echo $RESPONSE | jq ".[] | select(.number==$MILESTONE_ID)" | jq -r ".state")
 
           curl -L \
             -X DELETE \
-            -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/$GITHUB_REPOSITORY/milestones/$MILESTONE_ID
 
           FAIL="FALSE"
