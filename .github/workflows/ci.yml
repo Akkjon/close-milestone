@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
@@ -49,12 +46,71 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      - name: Create Milestone
+        id: create-milestone
+        run: |
+          MILESTONE_NAME="Test-Milestone-$REF_NAME";
+          echo "MILESTONE_NAME=$MILESTONE_NAME" >> $GITHUB_OUTPUT
+
+          RESPONSE=$(curl -X POST -v \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"title": "'"$MILESTONE_NAME"'", "state": "open", "description": "Test-Milestone", "due_on": "'"$(date -d '+1 days' '+%FT%TZ')"'"}' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones")
+
+          MILESTONE_ID=$(echo "$RESPONSE" | jq ".number")
+          echo "MILESTONE_ID=$MILESTONE_ID" >> $GITHUB_OUTPUT
+
+          echo "Created Milestone with number $MILESTONE_ID and name $MILESTONE_NAME"
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test Local Action
         id: test-action
         uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          milliseconds: 2000
+          milestone_name: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
+          crash_on_missing: true
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+      - name: Verify Action
+        id: verify
+        run: |
+          RESPONSE=$(curl \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones?state=all")
+
+          STATE=$(echo $RESPONSE | jq ".[] | select(.number==$MILESTONE_ID)" | jq -r ".state")
+
+          curl -L \
+            -X DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$GITHUB_REPOSITORY/milestones/$MILESTONE_ID
+
+          FAIL="FALSE"
+          if [ "$MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]; then
+            echo "Closed milestone id ($MILESTONE_ID) and opened milestone ($ORIGINAL_MILESTONE_ID) id do not match." >> /dev/stderr
+            FAIL="TRUE"
+          fi
+
+          if [ "$STATE" != "closed"]; then
+            echo "Milestone did not get closed. Its state was $STATE" >> /dev/stderr
+            FAIL="TRUE"
+          fi
+
+          if [ "$FAIL" = "TRUE"]; then
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MILESTONE_NAME: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
+          ORIGINAL_MILESTONE_ID:
+            ${{ steps.create-milestone.outputs.MILESTONE_ID }}
+          MILESTONE_ID: ${{ steps.create-milestone.outputs.MILESTONE_ID }}
