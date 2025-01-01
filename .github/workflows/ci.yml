@@ -57,7 +57,7 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Accept: application/vnd.github+json" \
             -d '{"title": "'"$MILESTONE_NAME"'", "state": "open", "description": "Test-Milestone", "due_on": "'"$(date -d '+1 days' '+%FT%TZ')"'"}' \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones")
+            "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones")
             echo "Response $RESPONSE"
 
           MILESTONE_ID=$(echo "$RESPONSE" | jq ".number")
@@ -66,13 +66,14 @@ jobs:
           echo "Created Milestone with number $MILESTONE_ID and name $MILESTONE_NAME"
         env:
           REF_NAME: ${{ github.ref_name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
 
       - name: Test Local Action
         id: test-action
         uses: ./
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
+          GITHUB_REPOSITORY: 'Akkjon/close-milestone-integration-test'
         with:
           milestone_name: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
           crash_on_missing: true
@@ -83,7 +84,7 @@ jobs:
           RESPONSE=$(curl \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/milestones?state=all")
+            "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones?state=all")
 
           STATE=$(echo $RESPONSE | jq ".[] | select(.number==$MILESTONE_ID)" | jq -r ".state")
 
@@ -91,7 +92,7 @@ jobs:
             -X DELETE \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY/milestones/$MILESTONE_ID
+            https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones/$MILESTONE_ID
 
           FAIL="FALSE"
           if [ "$MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]; then
@@ -108,7 +109,7 @@ jobs:
             exit 1
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
           MILESTONE_NAME: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
           ORIGINAL_MILESTONE_ID:
             ${{ steps.create-milestone.outputs.MILESTONE_ID }}
