@@ -4,6 +4,9 @@ A Github action to remove a milestone by the milestone's name
 [Code of conduct](CODE_OF_CONDUCT.md)
 
 [![GitHub release](https://img.shields.io/github/tag/Akkjon/close-milestone.svg)](https://gitHub.com/Akkjon/close-milestone/releases/)
+[![Coverage](./badges/coverage.svg)](./badges/coverage.svg)
+![CI](https://github.com/Akkjon/close-milestone/actions/workflows/ci.yml/badge.svg)
+[![Check dist/](https://github.com/Akkjon/close-milestone/actions/workflows/check-dist.yml/badge.svg)](https://github.com/Akkjon/close-milestone/actions/workflows/check-dist.yml)
 
 ## Inputs
 
