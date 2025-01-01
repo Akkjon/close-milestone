@@ -43,14 +43,16 @@ function handleMissingMilestone() {
 }
 
 function getRepositoryInformation() {
-  const repoUrl = process.env.GITHUB_REPOSITORY;
+  const repoUrl =
+    process.env.CLOSE_MILESTONE_REPOSITORY ?? process.env.GITHUB_REPOSITORY;
   if (!repoUrl || !repoUrl.includes('/')) {
     throw new Error(
       `Cannot determine repository owner and name because repository url does not comply with owner/repo and instead is ${repoUrl}`,
     );
   }
+  const [owner, name] = repoUrl.split('/');
   return {
-    owner: repoUrl.substring(0, repoUrl.indexOf('/')),
-    name: repoUrl.substring(repoUrl.indexOf('/') + 1),
+    owner,
+    name,
   };
 }

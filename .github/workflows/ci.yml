@@ -73,7 +73,7 @@ jobs:
         uses: ./
         env:
           GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
-          GITHUB_REPOSITORY: 'Akkjon/close-milestone-integration-test'
+          CLOSE_MILESTONE_REPOSITORY: 'Akkjon/close-milestone-integration-test'
         with:
           milestone_name: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
           crash_on_missing: true
