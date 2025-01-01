@@ -86,17 +86,11 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones?state=all")
 
-          STATE=$(echo $RESPONSE | jq ".[] | select(.number==$MILESTONE_ID)" | jq -r ".state")
-
-          curl -L \
-            -X DELETE \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones/$MILESTONE_ID
+          STATE=$(echo $RESPONSE | jq ".[] | select(.number==$ORIGINAL_MILESTONE_ID)" | jq -r ".state")
 
           FAIL="FALSE"
-          if [ "$MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]; then
-            echo "Closed milestone id ($MILESTONE_ID) and opened milestone ($ORIGINAL_MILESTONE_ID) id do not match." >> /dev/stderr
+          if [ "$CLOSED_MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]; then
+            echo "Closed milestone id ($CLOSED_MILESTONE_ID) and opened milestone ($ORIGINAL_MILESTONE_ID) id do not match." >> /dev/stderr
             FAIL="TRUE"
           fi
 
@@ -113,4 +107,17 @@ jobs:
           MILESTONE_NAME: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
           ORIGINAL_MILESTONE_ID:
             ${{ steps.create-milestone.outputs.MILESTONE_ID }}
+          CLOSED_MILESTONE_ID: ${{ steps.test-action.outputs.milestone_id }}
+
+      - name: Cleanup Created Milestone
+        id: cleanup
+        if: always()
+        run: |
+          curl -L \
+            -X DELETE \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones/$MILESTONE_ID
+        env:
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
           MILESTONE_ID: ${{ steps.create-milestone.outputs.MILESTONE_ID }}
