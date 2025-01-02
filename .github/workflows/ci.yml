@@ -1,0 +1,130 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-typescript:
+    name: TypeScript Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install Dependencies
+        id: npm-ci
+        run: npm ci
+
+      - name: Check Format
+        id: npm-format-check
+        run: npm run format:check
+
+      - name: Lint
+        id: npm-lint
+        run: npm run lint
+
+      - name: Test
+        id: npm-test
+        run: npm run test
+
+  test-action:
+    name: GitHub Actions Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Create Milestone
+        id: create-milestone
+        run: |
+          MILESTONE_NAME="Test-Milestone-$REF_NAME";
+          echo "🆕🏁 Creating Milestone with name $MILESTONE_NAME"
+          echo "MILESTONE_NAME=$MILESTONE_NAME" >> "$GITHUB_OUTPUT"
+
+          RESPONSE=$(curl -X POST -v \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/vnd.github+json" \
+            -d '{"title": "'"$MILESTONE_NAME"'", "state": "open", "description": "Test-Milestone", "due_on": "'"$(date -d '+1 days' '+%FT%TZ')"'"}' \
+            "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones")
+
+          MILESTONE_ID=$(echo "$RESPONSE" | jq ".number")
+          echo "MILESTONE_ID=$MILESTONE_ID" >> "$GITHUB_OUTPUT"
+
+          echo "Created Milestone with number $MILESTONE_ID and name $MILESTONE_NAME"
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
+          CLOSE_MILESTONE_REPOSITORY: 'Akkjon/close-milestone-integration-test'
+        with:
+          milestone_name: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
+          crash_on_missing: true
+
+      - name: Verify Action
+        id: verify
+        run: |
+          echo "🏁🔍 Retreiving all Milestones"
+          RESPONSE=$(curl \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones?state=all")
+
+          STATE=$(echo "$RESPONSE" | jq ".[] | select(.number==$ORIGINAL_MILESTONE_ID)" | jq -r ".state")
+
+          echo "🏁🧙‍♀️ Verifying that Milestone was correctly closed"
+          FAIL="FALSE"
+          if [[ "$CLOSED_MILESTONE_ID" != "$ORIGINAL_MILESTONE_ID" ]]; then
+            echo "Closed milestone id ($CLOSED_MILESTONE_ID) and opened milestone ($ORIGINAL_MILESTONE_ID) id do not match." >> /dev/stderr
+            FAIL="TRUE"
+          fi
+
+          if [[ "$STATE" != "closed" ]]; then
+            echo "Milestone did not get closed. Its state was $STATE" >> /dev/stderr
+            FAIL="TRUE"
+          fi
+
+          if [[ "$FAIL" == "TRUE" ]]; then
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
+          MILESTONE_NAME: ${{ steps.create-milestone.outputs.MILESTONE_NAME }}
+          ORIGINAL_MILESTONE_ID:
+            ${{ steps.create-milestone.outputs.MILESTONE_ID }}
+          CLOSED_MILESTONE_ID: ${{ steps.test-action.outputs.milestone_id }}
+
+      - name: Cleanup Created Milestone
+        id: cleanup
+        if: always()
+        run: |
+          echo "🏁🚮 Deleting created Milestone"
+          curl -L \
+            -X DELETE \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/Akkjon/close-milestone-integration-test/milestones/$MILESTONE_ID"
+        env:
+          GITHUB_TOKEN: ${{ secrets.INTEGRATION_TEST_ACCESS_TOKEN }}
+          MILESTONE_ID: ${{ steps.create-milestone.outputs.MILESTONE_ID }}

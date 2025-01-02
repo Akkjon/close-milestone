@@ -9,11 +9,13 @@ inputs:
     description: 'The name of the milestone.'
     required: true
   crash_on_missing:
-    description: 'If the action should crash with an exit code if the provided milestone is not found.'
+    description:
+      'If the action should crash with an exit code if the provided milestone is
+      not found.'
     default: false
 outputs:
   milestone_id:
     description: 'The id of the milestone which has been closed.'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
