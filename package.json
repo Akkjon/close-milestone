@@ -1,7 +1,7 @@
 {
   "name": "close-milestone",
   "author": "Akkjon",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "A GitHub Action to close a milestone by the milestone's name",
   "main": "dist/index.js",
   "scripts": {
